@@ -1,6 +1,6 @@
 # gobarber-mobile
 
-<p size=0.1>
+<p>
   <img src="./assets/app.gif">
 </p>
 

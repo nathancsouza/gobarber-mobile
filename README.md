@@ -1,7 +1,7 @@
 # gobarber-mobile
 
-<p size=3>
-  <img src="./assets/app.gif">
+<p>
+  <img src="./assets/app.gif" width="350">
 </p>
 
 ## Working with tests to finish the application

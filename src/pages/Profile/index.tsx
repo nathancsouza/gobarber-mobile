@@ -13,6 +13,7 @@ import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 
 import * as Yup from 'yup';
+import ImagePicker from 'react-native-image-picker';
 import getValidationErrors from '../../utils/getValidationErros';
 import api from '../../services/api';
 
@@ -46,7 +47,7 @@ const Profile: React.FC = () => {
   const passwordInputRef = useRef<TextInput>(null);
   const confirmPasswordInputRef = useRef<TextInput>(null);
 
-  const handleSignUp = useCallback(
+  const handleProfileUpdate = useCallback(
     async (data: ProfileFormData) => {
       try {
         formRef.current?.setErrors({});
@@ -123,6 +124,39 @@ const Profile: React.FC = () => {
     navigation.goBack();
   }, [navigation]);
 
+  const handleUpdateAvatar = useCallback(() => {
+    ImagePicker.showImagePicker(
+      {
+        title: 'Select an avatar',
+        cancelButtonTitle: 'Cancel',
+        takePhotoButtonTitle: 'Take photo',
+        chooseFromLibraryButtonTitle: 'Choose from library',
+      },
+      response => {
+        if (response.didCancel) {
+          return;
+        }
+
+        if (response.error) {
+          Alert.alert('Error updating your avatar');
+          return;
+        }
+
+        const data = new FormData();
+
+        data.append('avatar', {
+          type: 'image/jpeg',
+          name: `${user.id}.jpg`,
+          uri: response.uri,
+        });
+
+        api.patch('users/avatar', data).then(apiResponse => {
+          updateUser(apiResponse.data);
+        });
+      },
+    );
+  }, [updateUser, user.id]);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -139,14 +173,18 @@ const Profile: React.FC = () => {
               <Icon name="chevron-left" size={24} color="#999591" />
             </BackButton>
 
-            <UserAvatarButton onPress={() => {}}>
+            <UserAvatarButton onPress={handleUpdateAvatar}>
               <UserAvatar source={{ uri: user.avatar_url }} />
             </UserAvatarButton>
 
             <View>
               <Title>My profile</Title>
             </View>
-            <Form initialData={user} ref={formRef} onSubmit={handleSignUp}>
+            <Form
+              initialData={user}
+              ref={formRef}
+              onSubmit={handleProfileUpdate}
+            >
               <Input
                 autoCapitalize="words"
                 name="name"

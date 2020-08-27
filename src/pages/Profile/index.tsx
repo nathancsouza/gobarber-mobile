@@ -40,7 +40,7 @@ interface ProfileFormData {
 const Profile: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, signOut } = useAuth();
 
   const emailInputRef = useRef<TextInput>(null);
   const oldPasswordInputRef = useRef<TextInput>(null);
@@ -150,7 +150,7 @@ const Profile: React.FC = () => {
           uri: response.uri,
         });
 
-        api.patch('users/avatar', data).then(apiResponse => {
+        api.patch('/users/avatar', data).then(apiResponse => {
           updateUser(apiResponse.data);
         });
       },
